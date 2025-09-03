@@ -34,7 +34,9 @@ export default defineConfig({
 })
 EOF
 ```
-- Run app with Jupyter proxy  ```
+- Run app with Jupyter proxy
+- 
+- ```
 npm run build
 PROXY_URL=$(echo "$JUPYTER_SERVER_URL" | sed 's|/$||; s|http://run-68b856f6c7119a418b42d38c-kbhdb:8888|https://domino.astrazeneca.net|')/proxy/4173/
 echo $PROXY_URL
@@ -42,6 +44,8 @@ echo Preview will be available $PROXY_URL
 npm run preview
 
 ```
+
 ## Publish the app in Domino
+
 The app.sh file defines the steps for the code inside my-vite-app/src directory to be run as a Domino Web App.
 To run this app now as a Domino web app, publish the app using the app.sh from the Domino Deployments>app menu.
