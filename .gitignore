@@ -1,0 +1,20 @@
+# Dependencies
+my-vite-app/node_modules/
+
+# Build output
+my-vite-app/dist/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+.Trash-12574/
+.ipynb_checkpoints/
