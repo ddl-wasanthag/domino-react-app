@@ -11,6 +11,7 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | b
 ## App Preview
 This is the process to develop and preview your application inside a Domino workspace. The example code used in this example is in the my-vite-app/src directory inside the repository. Make sure to update the .gitignore file to filter unnecessary files into the git repository.
 - Create a Vite project
+
 ```
 
 yes | npm create vite@latest my-vite-app -- --template react --force
@@ -35,8 +36,8 @@ export default defineConfig({
 EOF
 ```
 - Run app with Jupyter proxy
-- 
-- ```
+
+```
 npm run build
 PROXY_URL=$(echo "$JUPYTER_SERVER_URL" | sed 's|/$||; s|http://run-68b856f6c7119a418b42d38c-kbhdb:8888|https://domino.astrazeneca.net|')/proxy/4173/
 echo $PROXY_URL
