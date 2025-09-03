@@ -1,6 +1,8 @@
 # An example React app with the Vite framework on Domino
 
-## Pre requistes
+This repository has the example code and instructions to - Create a new React project with the Vite framework- Write your application using React components in JavaScript- Use Vite to run a development server and see your changes instantly-Use Vite to build your final application for production in Domino
+
+## Prerequisites
 
 - You need to have Domino git credentials set up to create a git based project from https://github.com/ddl-wasanthag/domino-react-app
 - Create a Domino compute environment with NPM. The following is an example config to add to your Domino compute environments Dockerfile instructions
