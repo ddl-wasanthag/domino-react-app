@@ -1,6 +1,6 @@
 #Configure vite to run on Domino
 cd my-vite-app/
-
+npm install
 #run app
 npm run build
 npm install -g serve
