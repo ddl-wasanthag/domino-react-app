@@ -1,10 +1,13 @@
 # An example React app with the Vite framework on Domino
 
-This repository has the example code and instructions to - Create a new React project with the Vite framework- Write your application using React components in JavaScript- Use Vite to run a development server and see your changes instantly-Use Vite to build your final application for production in Domino
+This repository has the example code and instructions to - Create a new React project with the Vite framework- Write your application using React components in JavaScript- Use Vite to run a development server and see your changes instantly-Use Vite to build your final application for production in Domino.
+
+There is a CICD section with example script to create a Domino project, git credentails and deploy the app in this repository.
 
 ## Prerequisites
 
 - You need to have Domino git credentials set up to create a git based project from https://github.com/ddl-wasanthag/domino-react-app
+- If you are running the CICD automation outside of a Domino, you will need to set the enviornment variable DOMINO_USER_API_KEY
 - Create a Domino compute environment with NPM. The following is an example config to add to your Domino compute environments Dockerfile instructions
 ```
 # install Node
@@ -54,3 +57,26 @@ npm run preview
 
 The app.sh file defines the steps for the code inside my-vite-app/src directory to be run as a Domino Web App.
 To run this app now as a Domino web app, publish the app using the app.sh from the Domino Deployments>app menu.
+
+## Publish the app in Domino with API automation
+
+The CICD folder has sample Python script that reads configuratiion details from a yaml file and craertes Domino artifacts such as git credentials, project and deploy the app.
+
+To execute the script to create git credentials, projects and deploy app
+```
+python create_git_based_project_and_app.py create --config-file app-configs.yaml
+
+```
+
+To stop app
+
+```
+python stop_git_based_project_and_app.py create --config-file app-configs.yaml
+
+```
+
+To start app
+
+```
+python stop_git_based_project_and_app.py create --config-file app-configs.yaml
+```
