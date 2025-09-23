@@ -73,7 +73,10 @@ jobs:
           "${{ vars.PROJECT_NAME }}" \
           "${{ vars.APP_NAME }}" \
           "${{ vars.ENVIRONMENT_ID }}" \
-          "${{ vars.HARDWARE_TIER_ID }}"
+          "${{ vars.HARDWARE_TIER_ID }}" \
+          --repo-uri "${{ vars.REPO_URI }}" \
+          --repo-name "${{ vars.REPO_NAME }}" \
+          --git-provider-name "${{ vars.GIT_PROVIDER_NAME }}"                                  
       env:
         MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
         MODEL_API_TOKEN: ${{ secrets.MODEL_API_TOKEN }}

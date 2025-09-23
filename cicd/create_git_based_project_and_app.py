@@ -428,7 +428,7 @@ def main():
     args.app_description = get_value('app_description', getattr(args, 'app_description', 'App created via API'))
     
     # Validate required arguments after config loading
-    required_fields = ['username', 'domino_url', 'github_pat', 'project_name', 'app_name']
+    required_fields = ['username', 'user_api_key', 'domino_url', 'github_pat', 'project_name', 'app_name']
     missing_fields = [field for field in required_fields if not getattr(args, field)]
     
     if missing_fields:
