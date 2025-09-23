@@ -67,6 +67,7 @@ jobs:
       run: |
         python cicd/create_git_based_project_and_app.py \
           "${{ vars.DOMINO_USERNAME }}" \
+          "${{ secrets.DOMINO_USER_API_KEY }}" \
           "${{ vars.DOMINO_URL }}" \
           "${{ secrets.GH_PAT }}" \
           "${{ vars.PROJECT_NAME }}" \
