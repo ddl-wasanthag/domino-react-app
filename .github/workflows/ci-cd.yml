@@ -68,7 +68,7 @@ jobs:
         python cicd/create_git_based_project_and_app.py \
           "${{ vars.DOMINO_USERNAME }}" \
           "${{ vars.DOMINO_URL }}" \
-          "${{ secrets.GITHUB_PAT }}" \
+          "${{ secrets.GH_PAT }}" \
           "${{ vars.PROJECT_NAME }}" \
           "${{ vars.APP_NAME }}" \
           "${{ vars.ENVIRONMENT_ID }}" \
