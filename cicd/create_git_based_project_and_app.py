@@ -509,6 +509,8 @@ def main():
 
         # Wait for project to be ready
         wait_for_project_ready(domino_url, api_key, project_id)
+        print("Waiting 30 seconds before API calls...")
+        time.sleep(30)
 
         # Create the app
         app = create_app(domino_url, api_key, project_id, args.app_name, 
@@ -517,6 +519,9 @@ def main():
         logging.info(f"App ID: {app_id}")
         print(f"App created successfully with ID: {app_id}")
 
+        print("Waiting 30 seconds before API calls...")
+        time.sleep(30)
+        
         # Start the app
         if start_app(domino_url, api_key, app_id, args.environment_id, args.hardware_tier_id):
             print(f"App '{args.app_name}' has been created and started successfully in project '{args.project_name}'!")
