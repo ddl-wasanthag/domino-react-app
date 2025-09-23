@@ -45,25 +45,39 @@ describe('House Price Prediction App', () => {
   });
 
   it('displays prediction result on successful API call', async () => {
-  const user = userEvent.setup();
-  
-  fetch.mockResolvedValueOnce({
-    ok: true,
-    json: async () => ({ result: [450000.75] })
+    const user = userEvent.setup();
+    
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ result: [450000.75] })
+    });
+
+    render(<App />);
+    
+    const predictButton = screen.getByText('Predict');
+    await user.click(predictButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/prediction result/i)).toBeInTheDocument();
+      expect(screen.getByText('$450000.75')).toBeInTheDocument();
+    });
   });
 
-  render(<App />);
-  
-  const predictButton = screen.getByText('Predict');
-  await user.click(predictButton);
-  
-  // Debug: Let's see what's actually rendered
-  await waitFor(() => {
-    screen.debug(); // This will print the DOM to console
-  }, { timeout: 5000 });
-  
-  // Try more flexible text matching
-  await waitFor(() => {
-    expect(screen.getByText(/prediction result/i)).toBeInTheDocument();
+  it('displays error message on API failure', async () => {
+    const user = userEvent.setup();
+    
+    fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500
+    });
+
+    render(<App />);
+    
+    const predictButton = screen.getByText('Predict');
+    await user.click(predictButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Error:/)).toBeInTheDocument();
+    });
   });
 });
