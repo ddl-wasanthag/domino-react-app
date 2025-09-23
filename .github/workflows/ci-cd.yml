@@ -19,20 +19,26 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
+        cache-dependency-path: 'my-vite-app/package-lock.json'
     
     - name: Install dependencies
+      working-directory: ./my-vite-app
       run: npm ci
     
     - name: Run linter
+      working-directory: ./my-vite-app
       run: npm run lint
     
     - name: Run tests
+      working-directory: ./my-vite-app
       run: npm run test:run
     
     - name: Run tests with coverage
+      working-directory: ./my-vite-app
       run: npm run test:coverage
     
     - name: Build application
+      working-directory: ./my-vite-app
       run: npm run build
       env:
         VITE_MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
