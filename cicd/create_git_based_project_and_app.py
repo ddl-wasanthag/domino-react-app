@@ -415,7 +415,7 @@ def main():
     
     # Apply configuration values
     args.username = get_value('username', args.username)
-    args.user_api_key = get_value('username', args.user_api_key)
+    args.user_api_key = get_value('user_api_key', args.user_api_key)
     args.domino_url = get_value('domino_url', args.domino_url)
     args.github_pat = get_value('github_pat', args.github_pat)
     args.project_name = get_value('project_name', args.project_name)
