@@ -498,8 +498,8 @@ def main():
         print(f"Project created successfully with ID: {project_id}")
 
         # Wait for project to be ready if requested
-        if args.wait_for_project:
-            wait-for-project_ready(domino_url, api_key, project_id)
+        if args.wait-for-project:
+            wait_for_project_ready(domino_url, api_key, project_id)
 
         # Create the app
         app = create_app(domino_url, api_key, project_id, args.app_name, 
