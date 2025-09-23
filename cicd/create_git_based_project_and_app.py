@@ -437,7 +437,7 @@ def main():
             print("These must be provided in the config file or via command line arguments.")
         else:
             print("These can be provided via command line arguments or in a config file (use --config-file).")
-        sys.exit(1)
+      #  sys.exit(1)
 
     # Get API key
     api_key = args.user_api_key
@@ -498,7 +498,7 @@ def main():
         print(f"Project created successfully with ID: {project_id}")
 
         # Wait for project to be ready if requested
-        if args.wait-for-project:
+        if args.wait_for_project:
             wait_for_project_ready(domino_url, api_key, project_id)
 
         # Create the app
