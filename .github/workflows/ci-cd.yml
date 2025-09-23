@@ -65,7 +65,7 @@ jobs:
     
     - name: Deploy to Domino
       run: |
-        python cicd/script.py \
+        python cicd/create_git_based_project_and_app.py \
           "${{ secrets.DOMINO_USERNAME }}" \
           "${{ secrets.DOMINO_URL }}" \
           "${{ secrets.GITHUB_PAT }}" \
