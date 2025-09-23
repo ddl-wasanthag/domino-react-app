@@ -337,6 +337,7 @@ def main():
         
         # Make all positional arguments optional when config file might be used
         parser.add_argument("username", nargs='?', help="The username of the user")
+        parser.add_argument("user_api_key", nargs='?', help="The API key of the user")
         parser.add_argument("domino_url", nargs='?', help="The URL of the Domino instance")
         parser.add_argument("github_pat", nargs='?', help="The GitHub Personal Access Token")
         parser.add_argument("project_name", nargs='?', help="The name of the project")
@@ -365,6 +366,7 @@ def main():
         
         # Make all positional arguments optional when config file might be used  
         parser.add_argument("username", nargs='?', help="The username of the user")
+        parser.add_argument("user_api_key", nargs='?', help="The api key of the user")
         parser.add_argument("domino_url", nargs='?', help="The URL of the Domino instance")
         parser.add_argument("github_pat", nargs='?', help="The GitHub Personal Access Token")
         parser.add_argument("project_name", nargs='?', help="The name of the project")
@@ -413,6 +415,7 @@ def main():
     
     # Apply configuration values
     args.username = get_value('username', args.username)
+    args.user_api_key = get_value('user_api_key', args.user_api_key)
     args.domino_url = get_value('domino_url', args.domino_url)
     args.github_pat = get_value('github_pat', args.github_pat)
     args.project_name = get_value('project_name', args.project_name)
@@ -437,11 +440,7 @@ def main():
         sys.exit(1)
 
     # Get API key
-    api_key = os.getenv("DOMINO_USER_API_KEY")
-    if not api_key:
-        logging.error("API key not set in environment variables.")
-        print("API key not set in environment variables.")
-        sys.exit(1)
+    api_key = args.user_api_key
     
     # Use the provided domino_url directly
     domino_url = args.domino_url
@@ -449,6 +448,7 @@ def main():
     # Debug output to see what's being parsed
     print(f"Debug - Action: {getattr(args, 'action', 'create')}")
     print(f"Debug - Username: {args.username}")
+    print(f"Debug - User_api_key: {args.user_api_key}")
     print(f"Debug - Domino URL: {args.domino_url}")
     print(f"Debug - Project: {args.project_name}")
     print(f"Debug - App: {args.app_name}")

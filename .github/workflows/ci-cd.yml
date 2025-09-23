@@ -1,0 +1,79 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ feature/cicd ]
+  pull_request:
+    branches: [ feature/cicd ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'my-vite-app/package-lock.json'
+    
+    - name: Install dependencies
+      working-directory: ./my-vite-app
+      run: npm ci
+    
+        #    - name: Run linter
+        #      working-directory: ./my-vite-app
+        #      run: npm run lint
+        #    
+    - name: Run tests
+      working-directory: ./my-vite-app
+      run: npm run test:run
+    
+    - name: Run tests with coverage
+      working-directory: ./my-vite-app
+      run: npm run test:coverage
+    
+    - name: Build application
+      working-directory: ./my-vite-app
+      run: npm run build
+      env:
+        VITE_MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
+        VITE_MODEL_API_TOKEN: ${{ secrets.MODEL_API_TOKEN }}
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/feature/cicd' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f cicd/requirements.txt ]; then pip install -r cicd/requirements.txt; fi
+    
+    - name: Deploy to Domino
+      run: |
+        python cicd/create_git_based_project_and_app.py \
+          "${{ vars.DOMINO_USERNAME }}" \
+          "${{ secrets.DOMINO_USER_API_KEY }}" \
+          "${{ vars.DOMINO_URL }}" \
+          "${{ secrets.GH_PAT }}" \
+          "${{ vars.PROJECT_NAME }}" \
+          "${{ vars.APP_NAME }}" \
+          "${{ vars.ENVIRONMENT_ID }}" \
+          "${{ vars.HARDWARE_TIER_ID }}"
+      env:
+        MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
+        MODEL_API_TOKEN: ${{ secrets.MODEL_API_TOKEN }}
