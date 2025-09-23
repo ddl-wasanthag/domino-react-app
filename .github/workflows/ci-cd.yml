@@ -66,13 +66,13 @@ jobs:
     - name: Deploy to Domino
       run: |
         python cicd/create_git_based_project_and_app.py \
-          "${{ secrets.DOMINO_USERNAME }}" \
-          "${{ secrets.DOMINO_URL }}" \
+          "${{ vars.DOMINO_USERNAME }}" \
+          "${{ vars.DOMINO_URL }}" \
           "${{ secrets.GITHUB_PAT }}" \
-          "${{ secrets.PROJECT_NAME }}" \
-          "${{ secrets.APP_NAME }}" \
-          "${{ secrets.ENVIRONMENT_ID }}" \
-          "${{ secrets.HARDWARE_TIER_ID }}"
+          "${{ vars.PROJECT_NAME }}" \
+          "${{ vars.APP_NAME }}" \
+          "${{ vars.ENVIRONMENT_ID }}" \
+          "${{ vars.HARDWARE_TIER_ID }}"
       env:
         MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
         MODEL_API_TOKEN: ${{ secrets.MODEL_API_TOKEN }}
