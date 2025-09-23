@@ -497,9 +497,8 @@ def main():
         logging.info(f"Project ID: {project_id}")
         print(f"Project created successfully with ID: {project_id}")
 
-        # Wait for project to be ready if requested
-        if args.wait_for_project:
-            wait_for_project_ready(domino_url, api_key, project_id)
+        # Wait for project to be ready
+        wait_for_project_ready(domino_url, api_key, project_id)
 
         # Create the app
         app = create_app(domino_url, api_key, project_id, args.app_name, 
