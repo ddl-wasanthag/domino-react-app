@@ -76,7 +76,8 @@ jobs:
           "${{ vars.HARDWARE_TIER_ID }}" \
           --repo-uri "${{ vars.REPO_URI }}" \
           --repo-name "${{ vars.REPO_NAME }}" \
-          --git-provider-name "${{ vars.GIT_PROVIDER_NAME }}"                                  
+          --git-provider-name "${{ vars.GIT_PROVIDER_NAME }}" \                                  
+          --wait-for-project
       env:
         MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
         MODEL_API_TOKEN: ${{ secrets.MODEL_API_TOKEN }}
