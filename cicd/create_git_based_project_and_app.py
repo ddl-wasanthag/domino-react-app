@@ -41,7 +41,17 @@ def lookup_user(domino_url, api_key, username):
         "accept": "application/json",
         "X-Domino-Api-Key": api_key
     }
+    
+    # Add detailed debugging
+    print(f"Debug - Full URL: {url}")
+    print(f"Debug - API Key length: {len(api_key) if api_key else 'None'}")
+    print(f"Debug - Making request...")
+    
     response = requests.get(url, headers=headers)
+    
+    print(f"Debug - Response status: {response.status_code}")
+    print(f"Debug - Response headers: {dict(response.headers)}")
+    print(f"Debug - Response text: {response.text[:500]}")  # First 500 chars
     
     if response.status_code == 200:
         user_data = response.json()
@@ -53,8 +63,8 @@ def lookup_user(domino_url, api_key, username):
             print("User not found.")
             sys.exit(1)
     else:
-        logging.error("Failed to fetch user.")
-        print("Failed to fetch user.")
+        logging.error(f"Failed to fetch user. Status: {response.status_code}, Response: {response.text}")
+        print(f"Failed to fetch user. Status: {response.status_code}, Response: {response.text}")
         sys.exit(1)
 
 def create_git_provider(domino_url, api_key, user_id, github_pat, git_provider_name):
