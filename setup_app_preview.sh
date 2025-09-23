@@ -1,7 +1,7 @@
 # install Node
-#curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
  \. "$HOME/.nvm/nvm.sh"
-# nvm install 22
+nvm install 22
 # Remove any pre-existing folder…
 rm -rf my-vite-app
 # Create vite project
@@ -28,7 +28,8 @@ EOF
 
 
 #run app on jupyter proxy  
-npm run build
+#npm run build
+VITE_MODEL_API_URL=$MODEL_API_URL VITE_MODEL_API_TOKEN=$MODEL_API_TOKEN npm run build
 PROXY_URL=$(echo "$JUPYTER_SERVER_URL" | sed 's|/$||; s|http://run-68b856f6c7119a418b42d38c-kbhdb:8888|https://domino.astrazeneca.net|')/proxy/4173/
 echo $PROXY_URL
 echo Preview will be available $PROXY_URL
