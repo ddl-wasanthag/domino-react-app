@@ -1,17 +1,20 @@
 # An example React app with the Vite framework on Domino
 
-This repository has the example code and instructions to - Create a new React project with the Vite framework- Write your application using React components in JavaScript- Use Vite to run a development server and see your changes instantly-Use Vite to build your final application for production in Domino.
-The example app has a housing price prediction based on a DOmino Model API endpoint. Deploying model API endpoint is not part of this example.
+This repository contains the example code and instructions to create a new React project in Domino with the Vite framework. You can write your application using React components in JavaScript. Then use Vite to run a development server and see your changes instantly inside a Domino workspace.  Use Vite to build your final application for production in Domino.
+The example app also contains a housing price prediction endpoint based on a Domino Model API endpoint. 
 
-There is a CICD section with example script to create a Domino project, git credentails and deploy the app in this repository.
+There is a CICD section with an example script to create a Domino project, git credentials, and deploy the app in this repository.
 
 ## Prerequisites
 
 - You need to have Domino git credentials set up to create a git based project from https://github.com/ddl-wasanthag/domino-react-app
-- If you are running the CICD automation outside of a Domino, you will need to set the enviornment variable DOMINO_USER_API_KEY
+- If you are running the CICD automation outside of a Domino, you will need to set the environment variable DOMINO_USER_API_KEY
 - Create a Domino compute environment with NPM. The following is an example config to add to your Domino compute environments Dockerfile instructions
 
-- Set MODEL_API_URL(Ex: https://<your domino url>:443/models/6608b3be91229570a972aa95/latest/modeland MODEL_API_TOKEN
+- Deploy the Domino model API endpoint with the instructions in the endpoint folder.
+- 
+- Set MODEL_API_URL(Ex: https://<your domino url>:443/models/6608b3be91229570a972aa95/latest/model and MODEL_API_TOKEN
+- 
 ```
 # install Node
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash && \. "$HOME/.nvm/nvm.sh" && nvm install 22 && nvm use 22
