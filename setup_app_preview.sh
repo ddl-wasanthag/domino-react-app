@@ -29,8 +29,9 @@ EOF
 
 #run app on jupyter proxy  
 #npm run build
-VITE_MODEL_API_URL=$MODEL_API_URL VITE_MODEL_API_TOKEN=$MODEL_API_TOKEN npm run build
-PROXY_URL=$(echo "$JUPYTER_SERVER_URL" | sed 's|/$||; s|http://run-68b856f6c7119a418b42d38c-kbhdb:8888|https://domino.astrazeneca.net|')/proxy/4173/
+#VITE_MODEL_API_URL=$MODEL_API_URL VITE_MODEL_API_TOKEN=$MODEL_API_TOKEN npm run build
+PROXY_URL=$(echo "$JUPYTER_SERVER_URL" | sed 's|/$||; s|http://run-68b856f6c7119a418b42d38c-kbhdb:8888|https://cloud-cx.domino.tech|')/proxy/4173/
+PROXY_URL="https://cloud-cx.domino.tech/$(echo "$JUPYTER_SERVER_URL" | cut -d'/' -f4- | sed 's|/$||')/proxy/4173/"
 echo $PROXY_URL
 echo Preview will be available $PROXY_URL
 npm run preview

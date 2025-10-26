@@ -23,7 +23,9 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | b
 ### Github configuration
 
 The CI/CD automation in this repository is based on GitHub Actions. Therefore, all the Domino project/App parameters, as well as secrets to clone github repository and connect to Domino via API, must be defined as GitHub variables and secrets.
-Github Variables- APP_NAME
+Github Variables
+
+- APP_NAME
 
 Ex: Housing_predictions
 
@@ -65,8 +67,39 @@ Github Secrets
 
 - MODEL_API_URL
 
-## App Preview
-This is the process to develop and preview your application inside a Domino workspace. The example code used in this example is in the my-vite-app/src directory inside the repository. Make sure to update the .gitignore file to filter unnecessary files from being checked into the git repository.
+## App development and Preview
+
+This is the process to develop and preview your application inside a Domino workspace. The example code used in this example is in the my-vite-app/src directory inside the repository. Make sure to update the .gitignore file to filter unnecessary files from being checked into the git repository. 
+
+Example:
+
+```
+ubuntu@run-68fe45a3c3fd437842b50347-t49m9:/mnt/code$ cat .gitignore 
+# Dependencies
+my-vite-app/node_modules/
+
+# Build output
+my-vite-app/dist/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+.Trash-12574/
+.ipynb_checkpoints/
+
+```
+
+The development workflow uses the dev branch in the repository. You can create a new workspace based on the dev branch during the workspace creation wizard.
+
 
 - Create a Vite project
 
@@ -107,9 +140,10 @@ npm run preview
 
 ```
 
-## Publish the app in Domino
+## Automatically Publish the app into UAT in Domino
 
-The app.sh file defines the steps for the code inside my-vite-app/src directory to be run as a Domino Web App.
-To run this app now as a Domino web app, publish the app using the app.sh from the Domino Deployments>app menu.
+The app.sh file defines the steps for the code inside my-vite-app/src directory to be run as a Domino Web App. Next step is to create a PR in to the uat branch from the dev branch used to develop, test, and preview the code.
+
+
 
 
