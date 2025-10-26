@@ -11,16 +11,63 @@ There is a CICD section with an example script to create a Domino project, git c
 - If you are running the CICD automation outside of a Domino, you will need to set the environment variable DOMINO_USER_API_KEY
 - Create a Domino compute environment with NPM. The following is an example config to add to your Domino compute environments Dockerfile instructions
 
-- Deploy the Domino model API endpoint with the instructions in the endpoint folder.
-- 
-- Set MODEL_API_URL(Ex: https://<your domino url>:443/models/6608b3be91229570a972aa95/latest/model and MODEL_API_TOKEN
-- 
 ```
 # install Node
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash && \. "$HOME/.nvm/nvm.sh" && nvm install 22 && nvm use 22
 ```
+
+- Deploy the Domino model API endpoint with the instructions in the endpoint folder.
+
+- Set MODEL_API_URL(Ex: https://<your domino url>:443/models/6608b3be91229570a972aa95/latest/model and MODEL_API_TOKEN
+
+### Github configuration
+
+The CI/CD automation in this repository is based on GitHub Actions. Therefore, all the Domino project/App parameters, as well as secrets to clone github repository and connect to Domino via API, must be defined as GitHub variables and secrets.
+Github Variables- APP_NAME
+
+Ex: Housing_predictions
+
+- DOMINO_URL
+
+ex: cloud-cx.domino.tech
+
+- DOMINO_USERNAME
+
+ex: wasantha_gamage
+
+- ENVIRONMENT_ID
+
+ex: 68c09e16ff02ad64bfb459d3
+
+- GIT_PROVIDER_NAME
+
+ex: github_creds_001
+
+- HARDWARE_TIER_ID
+
+ex: Small
+
+- PROJECT_NAME
+
+ex: app_cicd_project01
+
+- REPO_NAME
+
+ex: Domino_React_App01
+
+- REPO_URI
+Github Secrets
+- DOMINO_USER_API_KEY
+
+- GH_PAT
+
+- MODEL_API_TOKEN
+
+- MODEL_API_URL
+
 ## App Preview
-This is the process to develop and preview your application inside a Domino workspace. The example code used in this example is in the my-vite-app/src directory inside the repository. Make sure to update the .gitignore file to filter unnecessary files into the git repository.
+This is the process to develop and preview your application inside a Domino workspace. The example code used in this example is in the my-vite-app/src directory inside the repository. Make sure to update the .gitignore file to filter unnecessary files from being checked into the git repository.
+
 - Create a Vite project
 
 ```
@@ -47,6 +94,7 @@ export default defineConfig({
 EOF
 ```
 - Run app with Jupyter proxy
+- 
 Make sure to replace x.y.z.com with your Domino URL.
 
 ```
@@ -64,25 +112,4 @@ npm run preview
 The app.sh file defines the steps for the code inside my-vite-app/src directory to be run as a Domino Web App.
 To run this app now as a Domino web app, publish the app using the app.sh from the Domino Deployments>app menu.
 
-## Publish the app in Domino with API automation
 
-The CICD folder has sample Python script that reads configuratiion details from a yaml file and craertes Domino artifacts such as git credentials, project and deploy the app.
-
-To execute the script to create git credentials, projects and deploy app
-```
-python create_git_based_project_and_app.py create --config-file app-configs.yaml
-
-```
-
-To stop app
-
-```
-python stop_git_based_project_and_app.py create --config-file app-configs.yaml
-
-```
-
-To start app
-
-```
-python stop_git_based_project_and_app.py create --config-file app-configs.yaml
-```
