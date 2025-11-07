@@ -69,7 +69,7 @@ Github Secrets
 
 ## App development and Preview
 
-This is the process to develop and preview your application inside a Domino workspace. The example code used in this example is in the my-vite-app/src directory inside the repository. Make sure to update the .gitignore file to filter unnecessary files from being checked into the git repository. 
+This is the process to develop and preview your application inside a Domino workspace. The example code used in this example is in the app-code directory inside the repository. Make sure to update the .gitignore file to filter unnecessary files from being checked into the git repository. 
 
 Example:
 
@@ -101,42 +101,94 @@ Thumbs.db
 The development workflow uses the dev branch in the repository. You can create a new workspace based on the dev branch during the workspace creation wizard.
 
 
-- Create a Vite project
+The setup_app_preview.sh script will create the Vite app, copy the code from the app-code folder, and start the server. Here is an example:
 
 ```
+ubuntu@run-690e40f6c3fd437842b51312-xxwzs:/mnt/code$ ./setup_app_preview.sh  https://cloud-cx.domino.tech
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 16631  100 16631    0     0   210k      0 --:--:-- --:--:-- --:--:--  210k
+=> nvm is already installed in /home/ubuntu/.nvm, trying to update using git
+=> => Compressing and cleaning up git repository
 
-yes | npm create vite@latest my-vite-app -- --template react --force
-cd my-vite-app/
-npm install
-```
--Create a Vite config that allows the Jupyter proxy to be used inside a Domino workspace. This has to be created inside the my-vite-app directory.
-```
-cat << 'EOF' > vite.config.js
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+=> nvm source string already in /home/ubuntu/.bashrc
+=> bash_completion source string already in /home/ubuntu/.bashrc
+=> Close and reopen your terminal to start using nvm or run the following to use it now:
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    host: '0.0.0.0',
-    allowedHosts: true
-  },
-  base: './'
-})
-EOF
-```
-- Run app with Jupyter proxy
-- 
-Make sure to replace x.y.z.com with your Domino URL.
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+v22.21.1 is already installed.
+Now using node v22.21.1 (npm v10.9.4)
 
-```
-npm run build
-PROXY_URL="https://x.y.z.com/$(echo "$JUPYTER_SERVER_URL" | cut -d'/' -f4- | sed 's|/$||')/proxy/4173/"
-echo $PROXY_URL
-echo $PROXY_URL
-echo Preview will be available $PROXY_URL
-npm run preview
+> npx
+> create-vite my-vite-app --template react --force
+
+│
+◇  Scaffolding project in /mnt/code/my-vite-app...
+│
+└  Done. Now run:
+
+  cd my-vite-app
+  npm install
+  npm run dev
+
+Installing dependencies...
+
+added 152 packages, and audited 153 packages in 10s
+
+32 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+Copying application code from app-code...
+Copying src folder...
+Copying public folder...
+Merging package.json dependencies...
+Installing additional dependencies from app-code...
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+
+added 370 packages, removed 12 packages, changed 21 packages, and audited 511 packages in 16s
+
+170 packages are looking for funding
+  run `npm fund` for details
+
+4 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+Building app...
+
+> my-vite-app@0.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+✓ 32 modules transformed.
+dist/index.html                   0.46 kB │ gzip:  0.29 kB
+dist/assets/index-DoTK98C6.css    2.47 kB │ gzip:  0.98 kB
+dist/assets/index-ConEUJjS.js   145.37 kB │ gzip: 47.01 kB
+✓ built in 1.28s
+
+=========================================
+Preview will be available at:
+https://cloud-cx.domino.tech/wasantha_gamage/cicd-blueprint-dev/notebookSession/690e40f6c3fd437842b51312/proxy/4173/
+=========================================
+
+
+> my-vite-app@0.0.0 preview
+> vite preview --host 0.0.0.0 --port 4173
+
+  ➜  Local:   http://localhost:4173/
+  ➜  Network: http://100.64.67.11:4173/
+  ➜  press h + enter to show help
+
 
 ```
 
