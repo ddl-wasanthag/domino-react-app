@@ -1,4 +1,53 @@
-deploy-uat:
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ uat, master ]
+  pull_request:
+    branches: [ uat, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'my-vite-app/package-lock.json'
+    
+    - name: Install dependencies
+      working-directory: ./my-vite-app
+      run: npm ci
+    
+    - name: Run tests
+      working-directory: ./my-vite-app
+      run: npm run test:run
+    
+    - name: Run tests with coverage
+      working-directory: ./my-vite-app
+      run: npm run test:coverage
+    
+    - name: Build application
+      working-directory: ./my-vite-app
+      run: npm run build
+      env:
+        VITE_MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
+        VITE_MODEL_API_TOKEN: ${{ secrets.MODEL_API_TOKEN }}
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: my-vite-app/dist
+        retention-days: 1
+
+  deploy-uat:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/uat' && github.event_name == 'push'
@@ -38,7 +87,7 @@ deploy-uat:
         MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
         MODEL_API_TOKEN: ${{ secrets.MODEL_API_TOKEN }}
 
-deploy-production:
+  deploy-production:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
