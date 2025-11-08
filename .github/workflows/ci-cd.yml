@@ -1,57 +1,6 @@
-name: CI/CD Pipeline
-
-on:
-  pull_request:
-    branches: [ uat, master ]
-    types: [ opened, synchronize, reopened ]
-  push:
-    branches: [ uat, master ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: 'my-vite-app/package-lock.json'
-    
-    - name: Install dependencies
-      working-directory: ./my-vite-app
-      run: npm ci
-    
-    - name: Run tests
-      working-directory: ./my-vite-app
-      run: npm run test:run
-    
-    - name: Run tests with coverage
-      working-directory: ./my-vite-app
-      run: npm run test:coverage
-    
-    - name: Build application
-      working-directory: ./my-vite-app
-      run: npm run build
-      env:
-        VITE_MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
-        VITE_MODEL_API_TOKEN: ${{ secrets.MODEL_API_TOKEN }}
-    
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts
-        path: my-vite-app/dist
-        retention-days: 1
-
-  deploy-uat:
+deploy-uat:
     needs: test
     runs-on: ubuntu-latest
-    # Only deploy when PR is merged (push event) to uat branch
     if: github.ref == 'refs/heads/uat' && github.event_name == 'push'
     environment: UAT
     
@@ -83,8 +32,8 @@ jobs:
           --repo-uri "${{ vars.REPO_URI }}" \
           --repo-name "${{ vars.REPO_NAME }}" \
           --git-provider-name "${{ vars.GIT_PROVIDER_NAME }}" \
-          --git-ref-type "branches" \
-          --git-ref-value "uat"
+          --git-ref-type "${{ vars.GIT_REF_TYPE }}" \
+          --git-ref-value "${{ vars.GIT_REF_VALUE }}"
       env:
         MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
         MODEL_API_TOKEN: ${{ secrets.MODEL_API_TOKEN }}
@@ -92,7 +41,6 @@ jobs:
   deploy-production:
     needs: test
     runs-on: ubuntu-latest
-    # Only deploy when PR is merged (push event) to master branch
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     environment: Production
     
@@ -124,8 +72,8 @@ jobs:
           --repo-uri "${{ vars.REPO_URI }}" \
           --repo-name "${{ vars.REPO_NAME }}" \
           --git-provider-name "${{ vars.GIT_PROVIDER_NAME }}" \
-          --git-ref-type "branches" \
-          --git-ref-value "master"
+          --git-ref-type "${{ vars.GIT_REF_TYPE }}" \
+          --git-ref-value "${{ vars.GIT_REF_VALUE }}"
       env:
         MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
         MODEL_API_TOKEN: ${{ secrets.MODEL_API_TOKEN }}

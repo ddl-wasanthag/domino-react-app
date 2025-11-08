@@ -112,7 +112,7 @@ def create_git_provider(domino_url, api_key, user_id, github_pat, git_provider_n
         print("Failed to create GitHub provider.")
         sys.exit(1)
 
-def create_project(domino_url, api_key, user_id, git_provider_id, project_name, repo_uri, repo_name):
+def create_project(domino_url, api_key, user_id, git_provider_id, project_name, repo_uri, repo_name, git_ref_type="branches", git_ref_value="master"):
     """Create a new project with git repository."""
     url = f"https://{domino_url}/v4/projects"
     headers = {
@@ -127,7 +127,10 @@ def create_project(domino_url, api_key, user_id, git_provider_id, project_name, 
         "ownerId": user_id,
         "mainRepository": {
             "uri": repo_uri,
-            "defaultRef": {"type": "head"},
+            "defaultRef": {
+                "type": git_ref_type,
+                "value": git_ref_value
+            },
             "name": repo_name,
             "serviceProvider": "github",
             "credentialId": git_provider_id
@@ -135,6 +138,8 @@ def create_project(domino_url, api_key, user_id, git_provider_id, project_name, 
         "collaborators": [],
         "tags": {"tagNames": []}
     }
+    
+    print(f"Debug - Creating project with git ref: {git_ref_type}/{git_ref_value}")
     response = requests.post(url, headers=headers, data=json.dumps(data))
     
     if response.status_code == 200:
@@ -143,7 +148,8 @@ def create_project(domino_url, api_key, user_id, git_provider_id, project_name, 
         return project
     else:
         logging.error(f"Failed to create project. Status: {response.status_code}, Response: {response.text}")
-        print("Failed to create project.")
+        print(f"Failed to create project. Status: {response.status_code}")
+        print(f"Response: {response.text}")
         sys.exit(1)
 
 def create_app(domino_url, api_key, project_id, app_name, environment_id, hardware_tier_id, git_ref_type="branches", git_ref_value="main", description="App created via API"):
@@ -517,7 +523,17 @@ def main():
         logging.info(f"GitHub Provider ID: {git_provider_id}")
 
         # Create project
-        project = create_project(domino_url, api_key, user_id, git_provider_id, args.project_name, args.repo_uri, args.repo_name)
+        project = create_project(
+            domino_url, 
+            api_key, 
+            user_id, 
+            git_provider_id, 
+            args.project_name, 
+            args.repo_uri, 
+            args.repo_name,
+            git_ref_type=args.git_ref_type,
+            git_ref_value=args.git_ref_value
+        )
         project_id = project['id']
         logging.info(f"Project ID: {project_id}")
         print(f"Project created successfully with ID: {project_id}")
