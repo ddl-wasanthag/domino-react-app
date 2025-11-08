@@ -40,7 +40,7 @@ In this example, we are using GitHub Environments for UAT and Production.
 
 - GIT_PROVIDER_NAME (Ex: github_creds_001)
 
-- HARDWARE_TIER_ID (Ex: Small)
+- HARDWARE_TIER_ID (Ex: small-k8s)
 
 - PROJECT_NAME (Ex: app_cicd_project01)
 
