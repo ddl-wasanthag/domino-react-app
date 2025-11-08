@@ -18,7 +18,7 @@ There is a CICD section with an example script to create a Domino project, git c
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash && \. "$HOME/.nvm/nvm.sh" && nvm install 22 && nvm use 22
 ```
 
-- Deploy the Domino model API endpoint with the instructions in the endpoint folder.
+- Deploy the Domino model API endpoint with the instructions in the endpoint folder
 
 - Set MODEL_API_URL(Ex: https://<your domino url>:443/models/6608b3be91229570a972aa95/latest/model and MODEL_API_TOKEN as user environment variables for development project.
 
@@ -40,7 +40,7 @@ In this example, we are using GitHub Environments for UAT and Production.
 
 - GIT_PROVIDER_NAME (Ex: github_creds_001)
 
-- HARDWARE_TIER_ID (Ex: Small)
+- HARDWARE_TIER_ID (Ex: small-k8s)
 
 - PROJECT_NAME (Ex: app_cicd_project01)
 

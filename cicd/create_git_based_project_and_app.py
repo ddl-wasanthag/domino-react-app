@@ -41,20 +41,49 @@ def lookup_user(domino_url, api_key, username):
         "accept": "application/json",
         "X-Domino-Api-Key": api_key
     }
-    response = requests.get(url, headers=headers)
     
-    if response.status_code == 200:
-        user_data = response.json()
-        if user_data:
-            logging.info(f"User found: {user_data[0]}")
-            return user_data[0]
-        else:
-            logging.error("User not found.")
-            print("User not found.")
+    print(f"Debug - Looking up user: {username}")
+    print(f"Debug - Full URL: {url}")
+    print(f"Debug - API Key starts with: {api_key[:10] if api_key and len(api_key) >= 10 else 'TOO_SHORT'}...")
+    print(f"Debug - API Key length: {len(api_key) if api_key else 0}")
+    
+    try:
+        response = requests.get(url, headers=headers, timeout=30)
+        
+        print(f"Debug - Response status: {response.status_code}")
+        print(f"Debug - Response headers: {dict(response.headers)}")
+        print(f"Debug - Response body: {response.text}")
+        
+        if response.status_code == 200:
+            user_data = response.json()
+            if user_data and len(user_data) > 0:
+                logging.info(f"User found: {user_data[0]}")
+                print(f"Debug - User ID: {user_data[0].get('id')}")
+                return user_data[0]
+            else:
+                logging.error("User not found - empty response.")
+                print(f"Error: User '{username}' not found in Domino. API returned empty list.")
+                print("Check that the username is spelled correctly and exists in Domino.")
+                sys.exit(1)
+        elif response.status_code == 401:
+            print("Error: Authentication failed (401). The API key is invalid or expired.")
+            print("Please check your DOMINO_USER_API_KEY secret in the UAT environment.")
             sys.exit(1)
-    else:
-        logging.error("Failed to fetch user.")
-        print("Failed to fetch user.")
+        elif response.status_code == 403:
+            print("Error: Access forbidden (403). The API key doesn't have permission to access user data.")
+            sys.exit(1)
+        else:
+            logging.error(f"Failed to fetch user. Status: {response.status_code}, Response: {response.text}")
+            print(f"Error: Failed to fetch user. HTTP Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            sys.exit(1)
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Network error while looking up user: {str(e)}")
+        print(f"Error: Network error while looking up user: {str(e)}")
+        sys.exit(1)
+    except Exception as e:
+        logging.error(f"Unexpected error while looking up user: {str(e)}")
+        print(f"Error: Unexpected error: {str(e)}")
         sys.exit(1)
 
 def create_git_provider(domino_url, api_key, user_id, github_pat, git_provider_name):
@@ -83,7 +112,7 @@ def create_git_provider(domino_url, api_key, user_id, github_pat, git_provider_n
         print("Failed to create GitHub provider.")
         sys.exit(1)
 
-def create_project(domino_url, api_key, user_id, git_provider_id, project_name, repo_uri, repo_name):
+def create_project(domino_url, api_key, user_id, git_provider_id, project_name, repo_uri, repo_name, git_ref_type="branches", git_ref_value="master"):
     """Create a new project with git repository."""
     url = f"https://{domino_url}/v4/projects"
     headers = {
@@ -98,7 +127,10 @@ def create_project(domino_url, api_key, user_id, git_provider_id, project_name, 
         "ownerId": user_id,
         "mainRepository": {
             "uri": repo_uri,
-            "defaultRef": {"type": "head"},
+            "defaultRef": {
+                "type": git_ref_type,
+                "value": git_ref_value
+            },
             "name": repo_name,
             "serviceProvider": "github",
             "credentialId": git_provider_id
@@ -106,6 +138,8 @@ def create_project(domino_url, api_key, user_id, git_provider_id, project_name, 
         "collaborators": [],
         "tags": {"tagNames": []}
     }
+    
+    print(f"Debug - Creating project with git ref: {git_ref_type}/{git_ref_value}")
     response = requests.post(url, headers=headers, data=json.dumps(data))
     
     if response.status_code == 200:
@@ -114,7 +148,8 @@ def create_project(domino_url, api_key, user_id, git_provider_id, project_name, 
         return project
     else:
         logging.error(f"Failed to create project. Status: {response.status_code}, Response: {response.text}")
-        print("Failed to create project.")
+        print(f"Failed to create project. Status: {response.status_code}")
+        print(f"Response: {response.text}")
         sys.exit(1)
 
 def create_app(domino_url, api_key, project_id, app_name, environment_id, hardware_tier_id, git_ref_type="branches", git_ref_value="main", description="App created via API"):
@@ -488,7 +523,17 @@ def main():
         logging.info(f"GitHub Provider ID: {git_provider_id}")
 
         # Create project
-        project = create_project(domino_url, api_key, user_id, git_provider_id, args.project_name, args.repo_uri, args.repo_name)
+        project = create_project(
+            domino_url, 
+            api_key, 
+            user_id, 
+            git_provider_id, 
+            args.project_name, 
+            args.repo_uri, 
+            args.repo_name,
+            git_ref_type=args.git_ref_type,
+            git_ref_value=args.git_ref_value
+        )
         project_id = project['id']
         logging.info(f"Project ID: {project_id}")
         print(f"Project created successfully with ID: {project_id}")
