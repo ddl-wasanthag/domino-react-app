@@ -9,6 +9,8 @@ There is a CICD section with an example script to create a Domino project, git c
 
 - You need to have Domino git credentials set up to create a git based project from https://github.com/ddl-wasanthag/domino-react-app
 - If you are running the CICD automation outside of a Domino, you will need to set the environment variable DOMINO_USER_API_KEY
+- Domino Service accounts are recommended for automated deployment. https://docs.dominodatalab.com/en/latest/admin_guide/6921e5/manage-domino-service-accounts/#_assign_roles_to_a_dsa
+- DOMINO_USER_API_KEY can be the service account token, in case the use of service accounts
 - Create a Domino compute environment with NPM. The following is an example config to add to your Domino compute environments Dockerfile instructions
 
 ```
@@ -18,54 +20,46 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | b
 
 - Deploy the Domino model API endpoint with the instructions in the endpoint folder.
 
-- Set MODEL_API_URL(Ex: https://<your domino url>:443/models/6608b3be91229570a972aa95/latest/model and MODEL_API_TOKEN
+- Set MODEL_API_URL(Ex: https://<your domino url>:443/models/6608b3be91229570a972aa95/latest/model and MODEL_API_TOKEN as user environment variables for development project.
 
 ### Github configuration
 
 The CI/CD automation in this repository is based on GitHub Actions. Therefore, all the Domino project/App parameters, as well as secrets to clone github repository and connect to Domino via API, must be defined as GitHub variables and secrets.
-Github Variables
 
-- APP_NAME
+In this example, we are using GitHub Environments for UAT and Production. 
 
-Ex: Housing_predictions
+#### Github Variables
 
-- DOMINO_URL
+- APP_NAME (Ex: Housing_predictions)
 
-ex: cloud-cx.domino.tech
+- DOMINO_URL (Ex: cloud-cx.domino.tech)
 
-- DOMINO_USERNAME
+- DOMINO_USERNAME (Ex: wasantha_gamage)
 
-ex: wasantha_gamage
+- ENVIRONMENT_ID (Ex: 68c09e16ff02ad64bfb459d3)
 
-- ENVIRONMENT_ID
+- GIT_PROVIDER_NAME (Ex: github_creds_001)
 
-ex: 68c09e16ff02ad64bfb459d3
+- HARDWARE_TIER_ID (Ex: Small)
 
-- GIT_PROVIDER_NAME
+- PROJECT_NAME (Ex: app_cicd_project01)
 
-ex: github_creds_001
+- REPO_NAME (Ex: Domino_React_App01)
 
-- HARDWARE_TIER_ID
+- REPO_URI (EX: https://github.com/ddl-wasanthag/domino-react-app)
 
-ex: Small
+- MODEL_API_URL (Ex: https://cloud-cx.domino.tech:443/models/6608b3be91229570a972aa95/latest/model)
 
-- PROJECT_NAME
+- 
+#### Github Secrets
 
-ex: app_cicd_project01
-
-- REPO_NAME
-
-ex: Domino_React_App01
-
-- REPO_URI
-Github Secrets
 - DOMINO_USER_API_KEY
 
-- GH_PAT
+- GH_PAT (Used to automatically clone the repo)
 
 - MODEL_API_TOKEN
 
-- MODEL_API_URL
+
 
 ## App development and Preview
 
