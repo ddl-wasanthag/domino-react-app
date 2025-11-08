@@ -205,7 +205,9 @@ const callAPI = async (inputData) => {
 
 ## Automatically Publish the app into UAT in Domino
 
-The app.sh file defines the steps for the code inside my-vite-app/src directory to be run as a Domino Web App. Next step is to create a PR in to the uat branch from the dev branch used to develop, test, and preview the code.
+The app.sh file defines the steps for the code inside my-vite-app/src directory to be run as a Domino Web App. The next step is to create a PR into the uat branch from the dev branch used to develop, test, and preview the code.
+
+The GitHub Actions workflow inside .github/workflows/ci-cd.yml will run tests and then start deploying to the UAT. 
 
 
 
