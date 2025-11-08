@@ -69,8 +69,8 @@ jobs:
 
     - name: Debug - Check secrets
       run: |
-      echo "Username: ${{ vars.DOMINO_USERNAME }}"
-      echo "API Key: ${DOMINO_USER_API_KEY}"
+        echo "Username: ${{ vars.DOMINO_USERNAME }}"
+        echo "API Key: ${DOMINO_USER_API_KEY}"
       env:
         DOMINO_USER_API_KEY: ${{ secrets.DOMINO_USER_API_KEY }}    
     
