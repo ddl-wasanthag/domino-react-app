@@ -41,20 +41,49 @@ def lookup_user(domino_url, api_key, username):
         "accept": "application/json",
         "X-Domino-Api-Key": api_key
     }
-    response = requests.get(url, headers=headers)
     
-    if response.status_code == 200:
-        user_data = response.json()
-        if user_data:
-            logging.info(f"User found: {user_data[0]}")
-            return user_data[0]
-        else:
-            logging.error("User not found.")
-            print("User not found.")
+    print(f"Debug - Looking up user: {username}")
+    print(f"Debug - Full URL: {url}")
+    print(f"Debug - API Key starts with: {api_key[:10] if api_key and len(api_key) >= 10 else 'TOO_SHORT'}...")
+    print(f"Debug - API Key length: {len(api_key) if api_key else 0}")
+    
+    try:
+        response = requests.get(url, headers=headers, timeout=30)
+        
+        print(f"Debug - Response status: {response.status_code}")
+        print(f"Debug - Response headers: {dict(response.headers)}")
+        print(f"Debug - Response body: {response.text}")
+        
+        if response.status_code == 200:
+            user_data = response.json()
+            if user_data and len(user_data) > 0:
+                logging.info(f"User found: {user_data[0]}")
+                print(f"Debug - User ID: {user_data[0].get('id')}")
+                return user_data[0]
+            else:
+                logging.error("User not found - empty response.")
+                print(f"Error: User '{username}' not found in Domino. API returned empty list.")
+                print("Check that the username is spelled correctly and exists in Domino.")
+                sys.exit(1)
+        elif response.status_code == 401:
+            print("Error: Authentication failed (401). The API key is invalid or expired.")
+            print("Please check your DOMINO_USER_API_KEY secret in the UAT environment.")
             sys.exit(1)
-    else:
-        logging.error("Failed to fetch user.")
-        print("Failed to fetch user.")
+        elif response.status_code == 403:
+            print("Error: Access forbidden (403). The API key doesn't have permission to access user data.")
+            sys.exit(1)
+        else:
+            logging.error(f"Failed to fetch user. Status: {response.status_code}, Response: {response.text}")
+            print(f"Error: Failed to fetch user. HTTP Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            sys.exit(1)
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Network error while looking up user: {str(e)}")
+        print(f"Error: Network error while looking up user: {str(e)}")
+        sys.exit(1)
+    except Exception as e:
+        logging.error(f"Unexpected error while looking up user: {str(e)}")
+        print(f"Error: Unexpected error: {str(e)}")
         sys.exit(1)
 
 def create_git_provider(domino_url, api_key, user_id, github_pat, git_provider_name):
