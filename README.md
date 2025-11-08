@@ -186,6 +186,23 @@ https://cloud-cx.domino.tech/wasantha_gamage/cicd-blueprint-dev/notebookSession/
 
 ```
 
+Note that the Vite app is referencing the Model API endpoint hosted using the environment variable in app-code/App.jsx
+
+```
+const callAPI = async (inputData) => {
+    try {
+      // Debug: Check what environment variables are available
+      console.log('=== DEBUG: Environment Variables ===');
+      console.log('VITE_MODEL_API_URL:', import.meta.env.VITE_MODEL_API_URL);
+      console.log('VITE_MODEL_API_TOKEN:', import.meta.env.VITE_MODEL_API_TOKEN);
+      
+      // Read from OS environment variables (as set in Domino)
+      const modelApiUrl = import.meta.env.VITE_MODEL_API_URL || import.meta.env.MODEL_API_URL;
+      const modelApiToken = import.meta.env.VITE_MODEL_API_TOKEN || import.meta.env.MODEL_API_TOKEN;
+      
+
+```
+
 ## Automatically Publish the app into UAT in Domino
 
 The app.sh file defines the steps for the code inside my-vite-app/src directory to be run as a Domino Web App. Next step is to create a PR in to the uat branch from the dev branch used to develop, test, and preview the code.
