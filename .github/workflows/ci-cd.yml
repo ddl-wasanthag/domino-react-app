@@ -1,9 +1,10 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches: [ uat, master ]
   pull_request:
+    branches: [ uat, master ]
+    types: [ opened, synchronize, reopened ]
+  push:
     branches: [ uat, master ]
 
 jobs:
@@ -50,6 +51,7 @@ jobs:
   deploy-uat:
     needs: test
     runs-on: ubuntu-latest
+    # Only deploy when PR is merged (push event) to uat branch
     if: github.ref == 'refs/heads/uat' && github.event_name == 'push'
     environment: UAT
     
@@ -90,6 +92,7 @@ jobs:
   deploy-production:
     needs: test
     runs-on: ubuntu-latest
+    # Only deploy when PR is merged (push event) to master branch
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     environment: Production
     
