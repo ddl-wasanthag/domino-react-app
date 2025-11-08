@@ -117,47 +117,36 @@ def create_project(domino_url, api_key, user_id, git_provider_id, project_name, 
         print("Failed to create project.")
         sys.exit(1)
 
-def create_app(domino_url, api_key, project_id, app_name, environment_id, hardware_tier_id, description="App created via API"):
-    """Create an app in the specified project."""
-    url = f"https://{domino_url}/v4/modelProducts"
+def create_app(domino_url, api_key, project_id, app_name, environment_id, hardware_tier_id, git_ref_type="branches", git_ref_value="main", description="App created via API"):
+    """Create an app in the specified project using the new beta API."""
+    url = f"https://{domino_url}/api/apps/beta/apps"
     headers = {
         "accept": "application/json",
         "X-Domino-Api-Key": api_key,
         "Content-Type": "application/json"
     }
     
-    # Get current timestamp in ISO format
-    from datetime import datetime
-    current_time = datetime.utcnow().isoformat() + 'Z'
-    
-    # Updated payload based on working UI example
     data = {
-        "id": "000000000000000000000000",  # Use valid ObjectId format with zeros
-        "modelProductType": "APP",
-        "projectId": project_id,
         "name": app_name,
         "description": description,
-        "created": current_time,
-        "lastUpdated": current_time,
-        "status": "",  # Empty string like UI
-        "openUrl": "",  # Added from UI example
-        "owner": {},  # Added empty owner object
-        "media": [],
-        "tags": [],
-        "appExtension": {
-            "appType": ""  # Empty string like UI
+        "projectId": project_id,
+        "entryPoint": "app.sh",
+        "renderIFrame": True,
+        "visibility": "GRANT_BASED",
+        "discoverable": True,
+        "mountDatasets": True,
+        "version": {
+            "hardwareTierId": hardware_tier_id,
+            "environmentId": environment_id,
+            "externalVolumeMountIds": [],
+            "netAppVolumeIds": []
         },
-        "stats": {
-            "usageCount": 0
-        },
-        "permissionsData": {
-            "visibility": "GRANT_BASED",  # Changed to match UI
-            "discoverable": True,
-            "appAccessStatus": "ALLOWED",
-            "accessRequestStatuses": {},
-            "pendingInvitations": []
+        "gitRef": {
+            "type": git_ref_type,
+            "value": git_ref_value
         }
     }
+    
     response = requests.post(url, headers=headers, data=json.dumps(data))
     
     if response.status_code == 200:
@@ -166,9 +155,10 @@ def create_app(domino_url, api_key, project_id, app_name, environment_id, hardwa
         return app
     else:
         logging.error(f"Failed to create app. Status: {response.status_code}, Response: {response.text}")
-        print("Failed to create app.")
+        print(f"Failed to create app. Status: {response.status_code}")
+        print(f"Response: {response.text}")
         sys.exit(1)
-
+        
 def start_app(domino_url, api_key, app_id, environment_id, hardware_tier_id):
     """Start the created app."""
     url = f"https://{domino_url}/v4/modelProducts/{app_id}/start"
@@ -344,7 +334,7 @@ def main():
         parser.add_argument("app_name", nargs='?', help="The name of the app to create/manage")
         parser.add_argument("environment_id", nargs='?', help="The environment ID for the app (required for create/start)")
         parser.add_argument("hardware_tier_id", nargs='?', help="The hardware tier ID for the app (required for create/start)")
-        
+                
         # Optional arguments
         parser.add_argument("--app-description", default="App created via API", help="Description for the app")
         parser.add_argument("--list-resources", action="store_true", help="List available environments and hardware tiers")
@@ -354,6 +344,8 @@ def main():
         parser.add_argument("--repo-uri", default="https://github.com/ddl-wasanthag/WineQualityWorkshop", help="Git repository URI")
         parser.add_argument("--repo-name", default="wine_quality", help="Git repository name")
         parser.add_argument("--git-provider-name", default="sa-git-creds-app", help="Git provider name")
+        parser.add_argument("--git-ref-type", default="branches", help="Git reference type (branches, tags, commit)")
+        parser.add_argument("--git-ref-value", default="main", help="Git reference value (branch name, tag name, or commit hash)")
 
         args = parser.parse_args(remaining_args)
         args.action = action  # Add the action back
@@ -385,6 +377,8 @@ def main():
         parser.add_argument("--repo-uri", default="https://github.com/ddl-wasanthag/WineQualityWorkshop", help="Git repository URI")
         parser.add_argument("--repo-name", default="wine_quality", help="Git repository name")
         parser.add_argument("--git-provider-name", default="sa-git-creds-app", help="Git provider name")
+        parser.add_argument("--git-ref-type", default="branches", help="Git reference type (branches, tags, commit)")
+        parser.add_argument("--git-ref-value", default="main", help="Git reference value (branch name, tag name, or commit hash)")
 
         args = parser.parse_args()
 
@@ -426,6 +420,8 @@ def main():
     args.repo_name = get_value('repo_name', getattr(args, 'repo_name', 'wine_quality'))
     args.git_provider_name = get_value('git_provider_name', getattr(args, 'git_provider_name', 'sa-git-creds-app'))
     args.app_description = get_value('app_description', getattr(args, 'app_description', 'App created via API'))
+    args.git_ref_type = get_value('git_ref_type', getattr(args, 'git_ref_type', 'branches'))
+    args.git_ref_value = get_value('git_ref_value', getattr(args, 'git_ref_value', 'main'))
     
     # Validate required arguments after config loading
     required_fields = ['username', 'domino_url', 'github_pat', 'project_name', 'app_name']
@@ -502,8 +498,17 @@ def main():
             wait_for_project_ready(domino_url, api_key, project_id)
 
         # Create the app
-        app = create_app(domino_url, api_key, project_id, args.app_name, 
-                         args.environment_id, args.hardware_tier_id, args.app_description)
+        app = create_app(
+            domino_url, 
+            api_key, 
+            project_id, 
+            args.app_name,
+            args.environment_id, 
+            args.hardware_tier_id,
+            git_ref_type=args.git_ref_type,
+            git_ref_value=args.git_ref_value,
+            description=args.app_description
+        )
         app_id = app['id']
         logging.info(f"App ID: {app_id}")
         print(f"App created successfully with ID: {app_id}")
