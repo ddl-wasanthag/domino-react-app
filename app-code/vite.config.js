@@ -5,24 +5,17 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0',
-    port: 8888,
     allowedHosts: true
-  },
-  preview: {
-    host: '0.0.0.0',
-    port: 8888
   },
   base: './',
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
+    css: true,
     coverage: {
+      provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'src/test/',
-      ],
-    },
-  },
+    }
+  }
 })
