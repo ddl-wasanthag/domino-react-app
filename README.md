@@ -210,5 +210,7 @@ The app.sh file defines the steps for the code inside my-vite-app/src directory 
 The GitHub Actions workflow inside .github/workflows/ci-cd.yml will run tests and then start deploying to the UAT. 
 
 
+## Automatically Publish the app into Production in Domino
+The next step is to create a PR into the master branch from the uat branch.
 
 
